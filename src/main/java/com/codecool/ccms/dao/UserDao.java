@@ -21,14 +21,10 @@ public class UserDao extends Dao<User> {
                 String name = results.getString("name");
                 String surname = results.getString("surname");
                 String email = results.getString("email");
-                String password = results.getString("password");
-                String phone = results.getString("phone");
 
-                // TODO factory pattern
-                //if (results.getString("Id_role") == Role.EMPLOYEE.toString()) {
-                //    User user = new User(id, email, name, surname, phone);
-                //    users.add(customer);
-                //}
+                Role role = Role.values()[results.getInt("id_role") + 1];
+                User user = UserFactory.getUser(role, id, name, surname, email);
+                users.add(user);
             }
             results.close();
             statement.close();
@@ -41,22 +37,22 @@ public class UserDao extends Dao<User> {
     }
 
     public void insertUser(String[] values) {
-        String[] columns = { "name", "surname", "email", "password", "phone", "Id_role" };
+        String[] columns = { "name", "surname", "password", "email", "id_role" };
 
         for (int i = 0; i < 5; i++) {
             values[i] = String.format("'%s'", values[i]);
         }
-        insert("Users", columns, values);
+        insert("users", columns, values);
 
     }
 
     public void updateUser(String id, String column, String newValue) {
         newValue = String.format("'%s'", newValue);
-        updateById("Users", id, column, newValue);
+        updateById("users", id, column, newValue);
     }
 
     public void print(String columns, String condition) {
-        printFromDB("Users", columns, condition);
+        printFromDB("users", columns, condition);
     }
 
     @Override
@@ -66,6 +62,6 @@ public class UserDao extends Dao<User> {
 
     @Override
     public void printAll() {
-        printFromDB("SELECT * FROM Users;");
+        printFromDB("SELECT * FROM users;");
     }
 }
