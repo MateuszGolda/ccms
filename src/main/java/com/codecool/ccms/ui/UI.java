@@ -6,9 +6,17 @@ import com.jakewharton.fliptables.FlipTableConverters;
 
 public class UI {
     private final IO io;
+    private static UI instance;
 
-    public UI() {
+    private UI() {
         io = new IO();
+    }
+
+    public static UI getInstance(){
+        if (instance == null) {
+            instance = new UI();
+        }
+        return instance;
     }
 
     public void displayLoginOrRegistrationMenu() {

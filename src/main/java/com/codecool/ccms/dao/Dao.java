@@ -12,7 +12,7 @@ import com.codecool.ccms.ui.UI;
 public abstract class Dao<T> {
     protected Connection connection;
     protected Statement statement;
-    protected final UI ui = new UI();
+    protected final UI ui = UI.getInstance();
 
     public static final String DB_NAME = "src/main/resources/ccmsDB";
     public static final String CONNECTION_STRING = "jdbc:sqlite:" + DB_NAME;
