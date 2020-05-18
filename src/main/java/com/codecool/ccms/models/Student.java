@@ -1,5 +1,7 @@
 package com.codecool.ccms.models;
 
+import com.codecool.ccms.controllers.StudentMenuController;
+
 public class Student extends User {
     public Student(int id, String name, String surname, String email) {
         super(id, name, surname, email);
@@ -8,5 +10,9 @@ public class Student extends User {
     @Override
     protected void displayMainMenu() {
 
+    }
+    @Override
+    public void setController() {
+        setMenuController(new StudentMenuController());
     }
 }
