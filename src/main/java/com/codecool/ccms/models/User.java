@@ -1,10 +1,13 @@
 package com.codecool.ccms.models;
 
+import com.codecool.ccms.controllers.MenuController;
+
 public abstract class User {
     private final int id;
     private String name;
     private String surname;
     private String email;
+    private MenuController menuController;
 
     User(int id, String name, String surname, String email) {
         this.id = id;
@@ -15,5 +18,14 @@ public abstract class User {
 
     protected abstract void displayMainMenu();
 
+    public void setMenuController(MenuController mc) {
+        menuController = mc;
+    }
+
+    public abstract void setController();
+
+    public void displayMenu() {
+        menuController.displayPanel();
+    }
 
 }
