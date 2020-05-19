@@ -10,7 +10,7 @@ import java.util.List;
 
 public class UserDao extends Dao<User> {
 
-    public List<User> getUsers(String query) {
+    public List<User> get(String query) {
         List<User> users = new ArrayList<>();
         connect();
 
@@ -36,19 +36,23 @@ public class UserDao extends Dao<User> {
         return users;
     }
 
-    public void insertUser(String[] values) {
+    public void insert(String[] values) {
         String[] columns = { "name", "surname", "password", "email", "id_role" };
-
+        // add '' for text data
         for (int i = 0; i < 5; i++) {
             values[i] = String.format("'%s'", values[i]);
         }
         insert("users", columns, values);
-
     }
 
-    public void updateUser(String id, String column, String newValue) {
+    public void updateById(String id, String column, String newValue) {
         newValue = String.format("'%s'", newValue);
         updateById("users", id, column, newValue);
+    }
+
+    public void update(String column, String newValue, String condition) {
+        newValue = String.format("'%s'", newValue);
+        update("users", column, newValue, condition);
     }
 
     public void print(String columns, String condition) {
@@ -57,7 +61,7 @@ public class UserDao extends Dao<User> {
 
     @Override
     public List<User> getAll() {
-        return getUsers("SELECT * FROM users;");
+        return get("SELECT * FROM users;");
     }
 
     @Override

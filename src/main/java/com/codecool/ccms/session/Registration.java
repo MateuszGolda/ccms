@@ -13,18 +13,18 @@ public class Registration {
 
     Registration() {
         ui = UI.getInstance();
-        enterUserData();
+        register();
     }
 
-    private void enterUserData() {
+    private void register() {
         String email = ui.gatherInput("Enter your email: ").toLowerCase();
         UserDao userDao = new UserDao();
-        List<User> sameEmailUsers = userDao.getUsers("SELECT * FROM Users WHERE email = \"" + email + "\";");
-        if (emailIsAlreadyTaken(sameEmailUsers)) {
+        List<User> sameEmailUsers = userDao.get("SELECT * FROM Users WHERE email = \"" + email + "\";");
+        if (isEmailTaken(sameEmailUsers)) {
             ui.gatherEmptyInput("User with this email already exists");
             return;
         }
-        if (!isValidEmailAddress(email)) {
+        if (!isEmailValid(email)) {
             ui.gatherEmptyInput("Invalid email address");
             return;
         }
@@ -33,15 +33,15 @@ public class Registration {
         String surname = ui.gatherInput("Enter your surname: ");
         String id_role = "1"; // by default new user role is student
         String[] values = {name, surname, password, email, id_role};
-        userDao.insertUser(values);
+        userDao.insert(values);
         ui.gatherEmptyInput("Successfully registered!");
     }
 
-    private boolean emailIsAlreadyTaken(List<User> sameEmailUsers) {
+    private boolean isEmailTaken(List<User> sameEmailUsers) {
         return !sameEmailUsers.isEmpty();
     }
 
-    public boolean isValidEmailAddress(String email) {
+    public boolean isEmailValid(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])" +
                 "|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
         Pattern p = Pattern.compile(ePattern);
