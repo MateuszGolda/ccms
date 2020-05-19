@@ -1,10 +1,8 @@
 package com.codecool.ccms.session;
 
 import com.codecool.ccms.dao.UserDao;
-import com.codecool.ccms.models.User;
 import com.codecool.ccms.ui.UI;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,32 +11,34 @@ public class Registration {
 
     Registration() {
         ui = UI.getInstance();
-        register();
+        String email = ui.gatherInput("Enter your email: ").toLowerCase();
+        var validEmail = isEmailAllowed(email);
+        if (validEmail) {
+            register(email);
+        }
     }
 
-    private void register() {
-        String email = ui.gatherInput("Enter your email: ").toLowerCase();
-        UserDao userDao = new UserDao();
-        List<User> sameEmailUsers = userDao.get("SELECT * FROM Users WHERE email = \"" + email + "\";");
-        if (isEmailTaken(sameEmailUsers)) {
+    private boolean isEmailAllowed(String email) {
+        boolean isEmailTaken = UserDao.getInstance().getByField("email", "'" + email + "'") != null;
+        if (isEmailTaken) {
             ui.gatherEmptyInput("User with this email already exists");
-            return;
+            return false;
         }
         if (!isEmailValid(email)) {
             ui.gatherEmptyInput("Invalid email address");
-            return;
+            return false;
         }
+        return true;
+    }
+
+    private void register(String email) {
         String password = ui.gatherInput("Enter your password: ");
         String name = ui.gatherInput("Enter your name: ");
         String surname = ui.gatherInput("Enter your surname: ");
         String id_role = "1"; // by default new user role is student
         String[] values = {name, surname, password, email, id_role};
-        userDao.insert(values);
+        UserDao.getInstance().insert(values);
         ui.gatherEmptyInput("Successfully registered!");
-    }
-
-    private boolean isEmailTaken(List<User> sameEmailUsers) {
-        return !sameEmailUsers.isEmpty();
     }
 
     public boolean isEmailValid(String email) {
