@@ -13,7 +13,7 @@ public class Login {
     }
 
     private List<User> getMatchingUser(String userEmail, char[] userPassword) {
-        return new UserDao().get(
+        return new UserDao().getMatching(
                 "SELECT * FROM Users WHERE email = '" + userEmail + "' AND password = '" + new String(userPassword) + "';");
     }
 }

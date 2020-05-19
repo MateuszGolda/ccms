@@ -9,8 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao extends Dao<User> {
+    private static UserDao instance;
 
-    public List<User> get(String query) {
+    private UserDao() {}
+
+    public static UserDao getInstance(){
+        if (instance == null) {
+            instance = new UserDao();
+        }
+        return instance;
+    }
+
+    public List<User> getMatching(String query) {
         List<User> users = new ArrayList<>();
         connect();
 
@@ -34,6 +44,12 @@ public class UserDao extends Dao<User> {
         }
 
         return users;
+    }
+
+    public User getByField(String column, String value) {
+        String query = "SELECT * FROM Users WHERE " + column + " = " + value + ";";
+        List<User> users = getMatching(query);
+        return users.isEmpty() ? null : users.get(0);
     }
 
     public void insert(String[] values) {
@@ -61,7 +77,7 @@ public class UserDao extends Dao<User> {
 
     @Override
     public List<User> getAll() {
-        return get("SELECT * FROM users;");
+        return getMatching("SELECT * FROM users;");
     }
 
     @Override
