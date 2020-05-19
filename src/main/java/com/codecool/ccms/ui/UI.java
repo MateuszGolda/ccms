@@ -23,7 +23,7 @@ public class UI {
         print(new String[] {"Welcome to ccms",
                              "(1) Login",
                              "(2) Register",
-                             "(2) Exit"});
+                             "(0) Exit"});
     }
 
     public <T> void printTable(Iterable<T> rows, Class<T> rowType) {

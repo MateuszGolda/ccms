@@ -22,7 +22,7 @@ public class UserDao extends Dao<User> {
                 String surname = results.getString("surname");
                 String email = results.getString("email");
 
-                Role role = Role.values()[results.getInt("id_role") + 1];
+                Role role = Role.values()[results.getInt("id_role") - 1];
                 User user = UserFactory.getUser(role, id, name, surname, email);
                 users.add(user);
             }

@@ -44,6 +44,7 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void displayStudentsList() {
+        System.out.println("In displayStudentsList");
     }
 
     private void addAssignment() {

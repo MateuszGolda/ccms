@@ -4,16 +4,16 @@ import com.codecool.ccms.models.User;
 import com.codecool.ccms.ui.UI;
 
 public class Session {
-        private final UI ui;
+    private final UI ui;
 
-        public Session() {
-            ui = UI.getInstance();
-            askIfLoginOrRegistration();
-            User user = logIn();
-            user.setController();
-            user.displayMenu();
-            //mainMenuChoice(user);
-        }
+    public Session() {
+        ui = UI.getInstance();
+        askIfLoginOrRegistration();
+        User user = logIn(new Login());
+        user.setController();
+        user.displayMenu();
+        //mainMenuChoice(user);
+    }
 
     private void askIfLoginOrRegistration() {
         boolean registered = false;
@@ -28,10 +28,9 @@ public class Session {
         } while (!registered);
     }
 
-    private User logIn() {
+    private User logIn(Login login) {
         User loggedUser;
         String userEmail;
-        Login login = new Login();
         do {
             userEmail = ui.gatherInput("Email: ").toLowerCase();
             char[] userPassword = ui.gatherInput("Password: ").toCharArray();
