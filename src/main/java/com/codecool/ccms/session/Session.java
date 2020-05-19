@@ -10,7 +10,6 @@ public class Session {
         ui = UI.getInstance();
         askIfLoginOrRegistration();
         User user = logIn(new Login());
-        user.setController();
         user.displayMenu();
         //mainMenuChoice(user);
     }
