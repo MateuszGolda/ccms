@@ -31,10 +31,10 @@ public class Registration {
         String password = ui.gatherInput("Enter your password: ");
         String name = ui.gatherInput("Enter your name: ");
         String surname = ui.gatherInput("Enter your surname: ");
-        String phone = ui.gatherInput("Enter your phone: ");
-        String Id_role = "2";
-        String[] values = {name, surname, email, password, phone, Id_role};
+        String id_role = "1"; // by default new user role is student
+        String[] values = {name, surname, password, email, id_role};
         userDao.insertUser(values);
+        ui.gatherEmptyInput("Successfully registered!");
     }
 
     private boolean emailIsAlreadyTaken(List<User> sameEmailUsers) {
