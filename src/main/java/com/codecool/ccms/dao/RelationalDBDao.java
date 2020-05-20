@@ -1,36 +1,18 @@
 package com.codecool.ccms.dao;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 
 import com.codecool.ccms.ui.UI;
 
-public abstract class Dao<T> {
+public abstract class RelationalDBDao<T> {
     protected Connection connection;
+    protected IConnection iConnection;
     protected Statement statement;
     protected final UI ui = UI.getInstance();
 
-    public static final String DB_NAME = "src/main/resources/ccmsDB";
-    public static final String CONNECTION_STRING = "jdbc:sqlite:" + DB_NAME;
-
-    public void connect() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(CONNECTION_STRING);
-            statement = connection.createStatement();
-        } catch (ClassNotFoundException e) {
-            e.getStackTrace();
-        } catch (SQLException e) {
-            System.out.println("Couldn't connect to database" + e.getMessage());
-        }
-    }
-
     public void printFromDB(String query) {
-        connect();
+        iConnection.connect();
         try {
             ResultSet results = statement.executeQuery(query);
             ui.printTableFromDB(results);
@@ -57,7 +39,7 @@ public abstract class Dao<T> {
         }
         String query = String.format("UPDATE %s SET %s = %s WHERE %s;", table, column, newValue, condition);
 
-        connect();
+        iConnection.connect();
         try {
             statement.execute(query);
         } catch (SQLException e) {
@@ -68,7 +50,7 @@ public abstract class Dao<T> {
     public void remove(String table, String id) {
         String query = String.format("DELETE FROM %s WHERE Id = %s;", table, id);
 
-        connect();
+        iConnection.connect();
         try {
             statement.execute(query);
         } catch (SQLException e) {
@@ -80,7 +62,7 @@ public abstract class Dao<T> {
         String columnsAsQuery = String.join(",", columns);
         String valuesAsQuery = String.join(",", values);
         String query = String.format("INSERT INTO %s (%s) VALUES (%s);", table, columnsAsQuery, valuesAsQuery);
-        connect();
+        iConnection.connect();
         try {
             statement.execute(query);
         } catch (SQLException e) {

@@ -1,5 +1,6 @@
 package com.codecool.ccms.dao;
 
+import com.codecool.ccms.Main;
 import com.codecool.ccms.models.Role;
 import com.codecool.ccms.models.User;
 
@@ -8,21 +9,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDao extends Dao<User> {
-    private static UserDao instance;
+public class UserDaoImplementation extends RelationalDBDao<User> implements UserDAO{
+    private static UserDaoImplementation instance;
+    private final IConnection iConnection;
 
-    private UserDao() {}
+    private UserDaoImplementation() {
+        iConnection = Main.iConnection;
+    }
 
-    public static UserDao getInstance(){
+    public static UserDaoImplementation getInstance(){
         if (instance == null) {
-            instance = new UserDao();
+            instance = new UserDaoImplementation();
         }
         return instance;
     }
 
     public List<User> getMatching(String query) {
         List<User> users = new ArrayList<>();
-        connect();
+        iConnection.connect();
 
         try {
             ResultSet results = statement.executeQuery(query);
@@ -83,5 +87,20 @@ public class UserDao extends Dao<User> {
     @Override
     public void printAll() {
         printFromDB("SELECT * FROM users;");
+    }
+
+    @Override
+    public boolean insertUser(User user) {
+        return false;
+    }
+
+    @Override
+    public boolean updateUser(User user) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteUser(User user) {
+        return false;
     }
 }
