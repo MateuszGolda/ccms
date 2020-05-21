@@ -41,7 +41,11 @@ public class SubmittedAssignmentDao extends RelationalDBDao<SubmittedAssignment>
 
     @Override
     public void insert(String[] values) {
-
+        String[] columns = { "id_assignment", "id_user", "content" };
+        for (int i = 0; i < values.length; i++) {
+            values[i] = String.format("'%s'", values[i]);
+        }
+        insert("assignments_users", columns, values);
     }
 
     @Override

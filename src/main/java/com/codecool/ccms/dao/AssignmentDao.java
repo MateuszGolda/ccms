@@ -40,7 +40,10 @@ public class AssignmentDao extends RelationalDBDao<Assignment> {
 
     @Override
     public void insert(String[] values) {
-        String[] columns = { "title", "descriptions", "isAvailable" };
+        String[] columns = { "title", "description", "isAvailable" };
+        for (int i = 0; i < values.length; i++) {
+            values[i] = String.format("'%s'", values[i]);
+        }
         insert("assignments", columns, values);
     }
 

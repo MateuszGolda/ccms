@@ -45,11 +45,11 @@ public class StudentMenuController implements MenuController{
 
     private void submitAssignment() {
         String email = ui.gatherInput("Enter your email: ");
-        List<User> user = UserDao.getInstance().find("email", email);
+        List<User> user = UserDao.getInstance().find("email", "'"+email+"'");
         String userID = String.valueOf(user.get(0).getId());
         ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT id, title, description FROM assignments\n" +
-                                                                           " left join assignments_users on  id=id_assignment\n" +
-                                                                           " where '" + userID +"' IS NULL"));
+                                                                           "left join assignments_users on id =id_assignment\n" +
+                                                                           "where isAvailable = 1 and id_user != "+ userID +" or id_user is null"));
         String assignmentID = ui.gatherInput("Enter id of assignment you want to submit: ");
         String content = ui.gatherInput("Enter content: ");
         String[] data = new String[] { assignmentID, userID, content } ;
