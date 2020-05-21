@@ -1,6 +1,12 @@
 package com.codecool.ccms.controllers;
 
+import com.codecool.ccms.dao.AssignmentDao;
+import com.codecool.ccms.dao.SubmittedAssignmentDao;
+import com.codecool.ccms.dao.UserDao;
+import com.codecool.ccms.models.User;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StudentMenuController implements MenuController{
@@ -38,6 +44,17 @@ public class StudentMenuController implements MenuController{
     }
 
     private void submitAssignment() {
+        String email = ui.gatherInput("Enter your email: ");
+        List<User> user = UserDao.getInstance().find("email", email);
+        String userID = String.valueOf(user.get(0).getId());
+        ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT id, title, description FROM assignments\n" +
+                                                                           " left join assignments_users on  id=id_assignment\n" +
+                                                                           " where '" + userID +"' IS NULL"));
+        String assignmentID = ui.gatherInput("Enter id of assignment you want to submit: ");
+        String content = ui.gatherInput("Enter content: ");
+        String[] data = new String[] { assignmentID, userID, content } ;
+        SubmittedAssignmentDao.getInstance().insert(data);
+
 
     }
 

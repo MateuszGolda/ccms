@@ -1,5 +1,6 @@
 package com.codecool.ccms.controllers;
 
+import com.codecool.ccms.dao.AssignmentDao;
 import com.codecool.ccms.dao.UserDao;
 
 import java.util.HashMap;
@@ -51,9 +52,20 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void addAssignment() {
+        String[] data = gatherAssignmentData();
+        AssignmentDao.getInstance().insert(data);
+        ui.gatherEmptyInput("Assignment successfully added!");
+    }
+
+    private String[] gatherAssignmentData() {
+        String title = ui.gatherInput("Enter title for Assignment: ");
+        String description = ui.gatherInput("Enter assignment description: ");
+        String isAvailable = "1"; //default set as available todo improve this magic number
+        return new String[] { title, description, isAvailable };
     }
 
     private void gradeAssignment() {
+
     }
 
     private void checkAttendance() {

@@ -72,7 +72,7 @@ public class ManagerMenuController implements  MenuController{
         Map<Integer, String> mentorFields = mentorFieldsMap();
         ui.printMap(mentorFields);
         int userChoice = ui.gatherIntInput("What field would you like to change",1, mentorFields.size());
-        String newValue = ui.gatherInput("Enter new value for '" + mentorFields.get(userChoice)) + "': ";
+        String newValue = ui.gatherInput("Enter new value for " + mentorFields.get(userChoice));
         UserDao.getInstance().update(mentorFields.get(userChoice), newValue,"id = " + id);
 
     }
