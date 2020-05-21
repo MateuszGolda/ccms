@@ -1,6 +1,8 @@
 package com.codecool.ccms.controllers;
 
 import com.codecool.ccms.dao.AssignmentDao;
+import com.codecool.ccms.dao.ClassesStudentsDao;
+import com.codecool.ccms.dao.SubmittedAssignmentDao;
 import com.codecool.ccms.dao.UserDao;
 
 import java.util.HashMap;
@@ -54,7 +56,7 @@ public class MentorMenuController implements  MenuController{
     private void addAssignment() {
         String[] data = gatherAssignmentData();
         AssignmentDao.getInstance().insert(data);
-        ui.gatherEmptyInput("Assignment successfully added!");
+        ui.gatherEmptyInput("Assignment successfully added!\n");
     }
 
     private String[] gatherAssignmentData() {
@@ -65,22 +67,73 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void gradeAssignment() {
+        displayAssignmentList();
+        String id = String.valueOf(ui.gatherIntInput("Enter id of assignment to grade: "));
+        displayUngradedAssignments( id);
+        String userID = String.valueOf(ui.gatherIntInput("Enter id_user to grade assignment: "));
+        displayConcreteAssignment(id, userID);
+        int grade = ui.gatherIntInput("What will be the grade for that assignment?",1, 5);
+        String condition =" id_assignment = '" + id + "' AND id_user = '" + userID+"'";
+        SubmittedAssignmentDao.getInstance().update("grade", String.valueOf(grade), condition);
+        ui.print("Assignment successfully graded\n");
+    }
 
+    private void displayConcreteAssignment(String id, String userID) {
+        ui.print("Assignment to grade:\n");
+        ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT id_assignment, id_user, content FROM assignments_users\n" +
+                "Where id_assignment = " + id + " and id_user = " + userID + " and grade is null"));
+    }
+
+    private void displayUngradedAssignments(String id) {
+        ui.print("Ungraded assignments:\n");
+        ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT id_assignment, id_user, content FROM assignments_users\n" +
+                "WHERE id_assignment = "+ id +" AND grade is null"));
+    }
+
+    private void displayAssignmentList() {
+        AssignmentDao.getInstance().print("*","isAvailable = 1");
     }
 
     private void checkAttendance() {
+
     }
 
     private void addStudent() {
+            displayStudentsList();
+            String id = String.valueOf(ui.gatherIntInput("Enter id_user to add to a class: "));
+            UserDao.getInstance().print("*","id = " + id);
+            Map<Integer, String> classList = getClassList();
+            ui.printMap(classList);
+            int userChoice = ui.gatherIntInput("What class would you assign to that student?",1, classList.size());
+            ClassesStudentsDao.getInstance().insert(new String[] {id, String.valueOf(userChoice)});
+            ui.print("Student successfully added to class\n");
+    }
 
-//        String[] values = { name, surname, password, email, id_role };
-//        UserDao.getInstance().insert(values);
+    private Map<Integer, String> getClassList() {
+        Map<Integer, String> classList = new HashMap<>();
+        classList.put(1, "ProgBasic");
+        classList.put(2, "JavaOOP");
+        classList.put(3, "Front-End");
+        classList.put(4, "Advance");
+        return classList;
     }
 
     private void editStudent() {
+        displayStudentsList();
+        String id = String.valueOf(ui.gatherIntInput("Enter id_user to edit student class: "));
+        UserDao.getInstance().print("*","id = " + id);
+        Map<Integer, String> classList = getClassList();
+        ui.printMap(classList);
+        int userChoice = ui.gatherIntInput("What class would you assign to that student?",1, classList.size());
+        ClassesStudentsDao.getInstance().update("id_class", String.valueOf(userChoice),"id_user = " + id);
+        ui.print("Successfully updated student class\n");
     }
 
     private void removeStudent() {
+        displayStudentsList();
+        String id = String.valueOf(ui.gatherIntInput("Enter id_user to remove student from class: "));
+        ClassesStudentsDao.getInstance().remove(id);
+        ui.print("Student successfully removed form class\n");
     }
 
     private void logout() {
