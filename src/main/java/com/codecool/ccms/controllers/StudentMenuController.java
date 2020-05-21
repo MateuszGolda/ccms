@@ -40,11 +40,21 @@ public class StudentMenuController implements MenuController{
     }
 
     private void displayStudentsGrades() {
-
+        String email = ui.gatherInput("Sensitive data, please enter your email: ");
+        List<User> user = UserDao.getInstance().find("email", "'"+email+"'");
+        String userID = String.valueOf(user.get(0).getId());
+        try {
+            ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT id, title, description, content, grade FROM assignments\n" +
+                    "left join assignments_users on id =id_assignment\n" +
+                    "where id_user = "+userID+" and grade is not null"));
+        } catch (Exception e) {
+            ui.print("You don't have any graded assignments, please check later.\n");
+        }
+        ui.gatherEmptyInput("Press anything to exit\n");
     }
 
     private void submitAssignment() {
-        String email = ui.gatherInput("Enter your email: ");
+        String email = ui.gatherInput("Confirm your email: ");
         List<User> user = UserDao.getInstance().find("email", "'"+email+"'");
         String userID = String.valueOf(user.get(0).getId());
         ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT id, title, description FROM assignments\n" +
