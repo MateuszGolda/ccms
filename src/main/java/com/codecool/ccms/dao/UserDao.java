@@ -1,6 +1,5 @@
 package com.codecool.ccms.dao;
 
-import com.codecool.ccms.Main;
 import com.codecool.ccms.models.Role;
 import com.codecool.ccms.models.User;
 
@@ -49,7 +48,7 @@ public class UserDao extends RelationalDBDao<User> {
 
     @Override
     public List<User> find(String column, String value) {
-        String query = "SELECT * FROM Users WHERE " + column + " = " + value + ";";
+        String query = "SELECT * FROM users WHERE " + column + " = " + value + ";";
         return findMatching(query);
     }
 
@@ -92,11 +91,13 @@ public class UserDao extends RelationalDBDao<User> {
 
     @Override
     public List<User> findById(String id) {
-        return null;
+        String query = "SELECT * FROM users WHERE id = " + id + ";";
+        return findMatching(query);
     }
 
     @Override
     public List<User> findByName(String name) {
-        return null;
+        String query = "SELECT * FROM users WHERE name = " + name + ";";
+        return findMatching(query);
     }
 }
