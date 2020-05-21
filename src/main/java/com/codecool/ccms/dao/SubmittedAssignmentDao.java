@@ -55,7 +55,8 @@ public class SubmittedAssignmentDao extends RelationalDBDao<SubmittedAssignment>
 
     @Override
     public void update(String column, String newValue, String condition) {
-
+        newValue = String.format("'%s'", newValue);
+        update("assignments_users", column, newValue, condition);
     }
 
     @Override
