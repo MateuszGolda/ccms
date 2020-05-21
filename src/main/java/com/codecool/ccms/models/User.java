@@ -26,7 +26,22 @@ public abstract class User {
     public abstract void setController();
 
     public void displayMenu() {
-        menuController.displayPanel();
+        menuController.runMenu();
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 }

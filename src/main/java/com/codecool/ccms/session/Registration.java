@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class Registration {
     private final UI ui;
 
-    Registration() {
+    public Registration() {
         ui = UI.getInstance();
         String email = ui.gatherInput("Enter your email: ").toLowerCase();
         var validEmail = isEmailAllowed(email);
@@ -19,8 +19,8 @@ public class Registration {
     }
 
     private boolean isEmailAllowed(String email) {
-        boolean isEmailTaken = UserDao.getInstance().getByField("email", "'" + email + "'") != null;
-        if (isEmailTaken) {
+        boolean isEmailAvailable = UserDao.getInstance().find("email", "'" + email + "'").isEmpty();
+        if (!isEmailAvailable) {
             ui.gatherEmptyInput("User with this email already exists");
             return false;
         }
