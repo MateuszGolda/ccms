@@ -26,7 +26,7 @@ public abstract class User {
     public abstract void setController();
 
     public void displayMenu() {
-        menuController.displayPanel();
+        menuController.runMenu();
     }
 
     public int getId() {

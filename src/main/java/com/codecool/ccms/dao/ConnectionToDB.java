@@ -4,16 +4,17 @@ import com.codecool.ccms.ui.UI;
 
 import java.sql.*;
 
-public class ConnectionToDB implements IConnection{
+public class ConnectionToDB implements ConnectionHandler {
     protected Connection connection;
-    protected Statement statement;
+    protected static Statement statement;
     protected final UI ui = UI.getInstance();
 
-    public static String DB_NAME; // = "src/main/resources/ccmsDB";
-    public static final String CONNECTION_STRING = "jdbc:sqlite:" + DB_NAME;
+    public static String DB_NAME;
+    public static String CONNECTION_STRING;
 
     public ConnectionToDB(String dbName) {
         DB_NAME = dbName;
+        CONNECTION_STRING = "jdbc:sqlite:" + DB_NAME;
     }
 
     public void connect() {
@@ -28,19 +29,13 @@ public class ConnectionToDB implements IConnection{
         }
     }
 
-    public void printFromDB(String query) {
-        connect();
-        try {
-            ResultSet results = statement.executeQuery(query);
-            ui.printTableFromDB(results);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public Statement getStatement() {
+        return statement;
     }
 
-    public void printFromDB(String table, String columns, String condition) {
-        String where = condition.isEmpty() ? "" : "WHERE" + condition;
-        String query = String.format("SELECT %s FROM %s %s;", columns, table, where);
-        printFromDB(query);
+    @Override
+    public Connection getConnection() {
+        return connection;
     }
 }

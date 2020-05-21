@@ -1,6 +1,6 @@
 package com.codecool.ccms.session;
 
-import com.codecool.ccms.dao.UserDaoImplementation;
+import com.codecool.ccms.dao.UserDao;
 import com.codecool.ccms.models.User;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public class Login {
     }
 
     private List<User> getMatchingUser(String userEmail, char[] userPassword) {
-        return UserDaoImplementation.getInstance().getMatching(
+        return UserDao.getInstance().findMatching(
                 "SELECT * FROM Users WHERE email = '" + userEmail + "' AND password = '" + new String(userPassword) + "';");
     }
 }

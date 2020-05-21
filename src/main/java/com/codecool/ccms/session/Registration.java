@@ -1,6 +1,6 @@
 package com.codecool.ccms.session;
 
-import com.codecool.ccms.dao.UserDaoImplementation;
+import com.codecool.ccms.dao.UserDao;
 import com.codecool.ccms.ui.UI;
 
 import java.util.regex.Matcher;
@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class Registration {
     private final UI ui;
 
-    Registration() {
+    public Registration() {
         ui = UI.getInstance();
         String email = ui.gatherInput("Enter your email: ").toLowerCase();
         var validEmail = isEmailAllowed(email);
@@ -19,8 +19,8 @@ public class Registration {
     }
 
     private boolean isEmailAllowed(String email) {
-        boolean isEmailTaken = UserDaoImplementation.getInstance().getByField("email", "'" + email + "'") != null;
-        if (isEmailTaken) {
+        boolean isEmailAvailable = UserDao.getInstance().find("email", "'" + email + "'").isEmpty();
+        if (!isEmailAvailable) {
             ui.gatherEmptyInput("User with this email already exists");
             return false;
         }
@@ -37,7 +37,7 @@ public class Registration {
         String surname = ui.gatherInput("Enter your surname: ");
         String id_role = "1"; // by default new user role is student
         String[] values = {name, surname, password, email, id_role};
-        UserDaoImplementation.getInstance().insert(values);
+        UserDao.getInstance().insert(values);
         ui.gatherEmptyInput("Successfully registered!");
     }
 

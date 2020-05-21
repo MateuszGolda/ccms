@@ -7,7 +7,7 @@ public interface MenuController {
 
     String[] gatherContextMenu();
 
-    void displayPanel();
+    void runMenu();
 
     void initializeMenu();
 

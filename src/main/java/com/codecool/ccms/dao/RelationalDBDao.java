@@ -3,43 +3,49 @@ package com.codecool.ccms.dao;
 import java.sql.*;
 import java.util.List;
 
+import com.codecool.ccms.Main;
 import com.codecool.ccms.ui.UI;
 
-public abstract class RelationalDBDao<T> {
+public abstract class RelationalDBDao<T> implements DAO<T> {
     protected Connection connection;
-    protected IConnection iConnection;
+    protected ConnectionHandler connectionHandler;
     protected Statement statement;
-    protected final UI ui = UI.getInstance();
+    protected final UI ui;
 
-    public void printFromDB(String query) {
-        iConnection.connect();
+    public RelationalDBDao() {
+        connectionHandler = Main.connectionHandler;
+        statement = connectionHandler.getStatement();
+        connection = connectionHandler.getConnection();
+        ui = UI.getInstance();
+    }
+
+    public ResultSet resultSetFromQuery(String query) {
         try {
-            ResultSet results = statement.executeQuery(query);
-            ui.printTableFromDB(results);
+            return statement.executeQuery(query);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    public void printFromDB(String table, String columns, String condition) {
+    public ResultSet resultSetFromQuery(String table, String columns, String condition) {
         String where = condition.isEmpty() ? "" : "WHERE" + condition;
         String query = String.format("SELECT %s FROM %s %s;", columns, table, where);
-        printFromDB(query);
+        return resultSetFromQuery(query);
     }
 
-    protected void updateById(String table, String id, String column, String newValue) {
+    public void updateById(String table, String id, String column, String newValue) {
         String condition = String.format("Id = %s", id);
         update(table, column, newValue, condition);
     }
 
-    protected void update(String table, String column, String newValue, String condition) {
+    public void update(String table, String column, String newValue, String condition) {
         if (column.toLowerCase().equals("id")) {
             System.out.println("You can't change id");
             return;
         }
         String query = String.format("UPDATE %s SET %s = %s WHERE %s;", table, column, newValue, condition);
 
-        iConnection.connect();
         try {
             statement.execute(query);
         } catch (SQLException e) {
@@ -50,7 +56,6 @@ public abstract class RelationalDBDao<T> {
     public void remove(String table, String id) {
         String query = String.format("DELETE FROM %s WHERE Id = %s;", table, id);
 
-        iConnection.connect();
         try {
             statement.execute(query);
         } catch (SQLException e) {
@@ -58,11 +63,10 @@ public abstract class RelationalDBDao<T> {
         }
     }
 
-    protected void insert(String table, String[] columns, String[] values) {
+    public void insert(String table, String[] columns, String[] values) {
         String columnsAsQuery = String.join(",", columns);
         String valuesAsQuery = String.join(",", values);
         String query = String.format("INSERT INTO %s (%s) VALUES (%s);", table, columnsAsQuery, valuesAsQuery);
-        iConnection.connect();
         try {
             statement.execute(query);
         } catch (SQLException e) {
@@ -70,7 +74,23 @@ public abstract class RelationalDBDao<T> {
         }
     }
 
-    public abstract List<T> getAll();
+    public abstract List<T> findById(String id);
 
-    public abstract void printAll();
+    public abstract List<T> findByName(String name);
+
+    public abstract List<T> findMatching(String query);
+
+    public abstract List<T> find(String column, String value);
+
+    public abstract void insert(String[] values);
+
+    public abstract void updateById(String id, String column, String newValue);
+
+    public abstract void update(String column, String newValue, String condition);
+
+    public abstract void print(String columns, String condition);
+
+    public abstract List<T> findAll(String table);
+
+    public abstract void printAll(String table);
 }

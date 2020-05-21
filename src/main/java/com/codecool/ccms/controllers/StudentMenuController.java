@@ -16,7 +16,7 @@ public class StudentMenuController implements MenuController{
     }
 
     @Override
-    public void displayPanel() {
+    public void runMenu() {
         initializeMenu();
         while(isLogin) {
             ui.print(gatherContextMenu());
@@ -24,6 +24,7 @@ public class StudentMenuController implements MenuController{
             studentMenu.get(userChoice).run();
         }
     }
+
     @Override
     public void initializeMenu() {
         studentMenu = new HashMap<>();

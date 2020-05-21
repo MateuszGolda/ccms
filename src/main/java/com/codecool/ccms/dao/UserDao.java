@@ -9,24 +9,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoImplementation extends RelationalDBDao<User> implements UserDAO{
-    private static UserDaoImplementation instance;
-    private final IConnection iConnection;
+public class UserDao extends RelationalDBDao<User> {
+    private static UserDao instance;
 
-    private UserDaoImplementation() {
-        iConnection = Main.iConnection;
+    private UserDao() {
+        super();
     }
 
-    public static UserDaoImplementation getInstance(){
+    public static UserDao getInstance(){
         if (instance == null) {
-            instance = new UserDaoImplementation();
+            instance = new UserDao();
         }
         return instance;
     }
 
-    public List<User> getMatching(String query) {
+    @Override
+    public List<User> findMatching(String query) {
         List<User> users = new ArrayList<>();
-        iConnection.connect();
 
         try {
             ResultSet results = statement.executeQuery(query);
@@ -41,8 +40,6 @@ public class UserDaoImplementation extends RelationalDBDao<User> implements User
                 users.add(user);
             }
             results.close();
-            statement.close();
-            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,12 +47,13 @@ public class UserDaoImplementation extends RelationalDBDao<User> implements User
         return users;
     }
 
-    public User getByField(String column, String value) {
+    @Override
+    public List<User> find(String column, String value) {
         String query = "SELECT * FROM Users WHERE " + column + " = " + value + ";";
-        List<User> users = getMatching(query);
-        return users.isEmpty() ? null : users.get(0);
+        return findMatching(query);
     }
 
+    @Override
     public void insert(String[] values) {
         String[] columns = { "name", "surname", "password", "email", "id_role" };
         // add '' for text data
@@ -65,42 +63,40 @@ public class UserDaoImplementation extends RelationalDBDao<User> implements User
         insert("users", columns, values);
     }
 
+    @Override
     public void updateById(String id, String column, String newValue) {
         newValue = String.format("'%s'", newValue);
         updateById("users", id, column, newValue);
     }
 
+    @Override
     public void update(String column, String newValue, String condition) {
         newValue = String.format("'%s'", newValue);
         update("users", column, newValue, condition);
     }
 
+    @Override
     public void print(String columns, String condition) {
-        printFromDB("users", columns, condition);
+        ui.printTableFromDB(resultSetFromQuery("users", columns, condition));
     }
 
     @Override
-    public List<User> getAll() {
-        return getMatching("SELECT * FROM users;");
+    public List<User> findAll(String table) {
+        return findMatching("SELECT * FROM " + table + ";");
     }
 
     @Override
-    public void printAll() {
-        printFromDB("SELECT * FROM users;");
+    public void printAll(String table) {
+        ui.printTableFromDB(resultSetFromQuery("SELECT * FROM " + table + ";"));
     }
 
     @Override
-    public boolean insertUser(User user) {
-        return false;
+    public List<User> findById(String id) {
+        return null;
     }
 
     @Override
-    public boolean updateUser(User user) {
-        return false;
-    }
-
-    @Override
-    public boolean deleteUser(User user) {
-        return false;
+    public List<User> findByName(String name) {
+        return null;
     }
 }

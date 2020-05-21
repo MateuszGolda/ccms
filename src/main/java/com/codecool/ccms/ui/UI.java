@@ -30,8 +30,12 @@ public class UI {
         System.out.println(FlipTableConverters.fromIterable(rows, rowType));
     }
 
-    public void printTableFromDB(ResultSet resultSet) throws SQLException {
-        System.out.println(FlipTableConverters.fromResultSet(resultSet));
+    public void printTableFromDB(ResultSet resultSet) {
+        try {
+            System.out.println(FlipTableConverters.fromResultSet(resultSet));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void print(String toPrint) {
