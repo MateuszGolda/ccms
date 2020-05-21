@@ -43,7 +43,7 @@ public class UI {
         }
     }
 
-    public void printMap(Map map){
+    public <K, V> void printMap(Map<K, V> map){
         map.forEach((k,v) -> System.out.println("("+k+") "+v));
     }
 

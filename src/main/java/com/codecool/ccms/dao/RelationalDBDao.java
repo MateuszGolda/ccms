@@ -7,15 +7,13 @@ import com.codecool.ccms.Main;
 import com.codecool.ccms.ui.UI;
 
 public abstract class RelationalDBDao<T> implements DAO<T> {
-    protected Connection connection;
-    protected ConnectionHandler connectionHandler;
-    protected Statement statement;
+    protected final ConnectionHandler connectionHandler;
+    protected final Statement statement;
     protected final UI ui;
 
     public RelationalDBDao() {
         connectionHandler = Main.connectionHandler;
         statement = connectionHandler.getStatement();
-        connection = connectionHandler.getConnection();
         ui = UI.getInstance();
     }
 
