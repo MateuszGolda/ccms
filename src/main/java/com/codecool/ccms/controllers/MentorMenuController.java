@@ -4,8 +4,10 @@ import com.codecool.ccms.dao.AssignmentDao;
 import com.codecool.ccms.dao.ClassesStudentsDao;
 import com.codecool.ccms.dao.SubmittedAssignmentDao;
 import com.codecool.ccms.dao.UserDao;
+import com.codecool.ccms.models.SubmittedAssignment;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MentorMenuController implements  MenuController{
@@ -51,6 +53,27 @@ public class MentorMenuController implements  MenuController{
     private void displayStudentsList() {
         //ui.printTableFromDB(UserDao.getInstance().resultSetFromQuery("SELECT ")); //todo print table of students to se how they perform
         UserDao.getInstance().print("id, name, surname, email","id_role = 1");
+        List<SubmittedAssignment> submittedAssignmentList = SubmittedAssignmentDao.getInstance().findGradedAssignments();
+        Map<String, Integer> numberOfGradesMap = new HashMap<>();
+        Map<String, Integer> sumOfGradesMap = new HashMap<>();
+        Map<String, Float> studentsAverageGradesMap = new HashMap<>();
+        for (SubmittedAssignment entry : submittedAssignmentList) {
+            String student = String.format("%s %s", entry.getName(), entry.getSurname());
+            int grade = entry.getGrade();
+            int numberOfGrades = 1;
+            if (!studentsAverageGradesMap.containsKey(student)) {
+                numberOfGradesMap.put(student, numberOfGrades);
+                sumOfGradesMap.put(student, grade);
+                studentsAverageGradesMap.put(student,  ((float)grade/(float)numberOfGrades) );
+            } else {
+                numberOfGradesMap.put(student,(numberOfGradesMap.get(student) + 1));
+                sumOfGradesMap.put(student,(sumOfGradesMap.get(student) + grade) );
+                studentsAverageGradesMap.put(student, ((float)sumOfGradesMap.get(student)/(float)numberOfGradesMap.get(student)));
+            }
+        }
+        ui.print("(Student) [Średnia Ocen]");
+        ui.printMap(studentsAverageGradesMap);
+        ui.print("\n");
     }
 
     private void addAssignment() {
