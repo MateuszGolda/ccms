@@ -1,7 +1,6 @@
 package com.codecool.ccms.controllers;
 
 import com.codecool.ccms.dao.UserDao;
-import com.codecool.ccms.session.Registration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,10 +71,10 @@ public class ManagerMenuController implements  MenuController{
         Map<Integer, String> mentorFields = mentorFieldsMap();
         ui.printMap(mentorFields);
         int userChoice = ui.gatherIntInput("What field would you like to change",1, mentorFields.size());
-        String newValue = ui.gatherInput("Enter new value for " + mentorFields.get(userChoice));
+        String newValue = ui.gatherInput("Enter new value for '" + mentorFields.get(userChoice) + "': ");
         UserDao.getInstance().update(mentorFields.get(userChoice), newValue,"id = " + id);
-
     }
+
     public Map<Integer, String> mentorFieldsMap() {
         Map<Integer, String> mentorFields = new HashMap<>();
         mentorFields.put(1, "name");
@@ -88,7 +87,6 @@ public class ManagerMenuController implements  MenuController{
 
     private void displayMentorsList() {
         UserDao.getInstance().print("*","id_role = 2");
-
     }
 
     private void displayStudentsList() {

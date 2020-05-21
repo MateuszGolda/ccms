@@ -1,13 +1,10 @@
 package com.codecool.ccms.dao;
 
-import com.codecool.ccms.ui.UI;
-
 import java.sql.*;
 
 public class ConnectionToDB implements ConnectionHandler {
     protected Connection connection;
     protected static Statement statement;
-    protected final UI ui = UI.getInstance();
 
     public static String DB_NAME;
     public static String CONNECTION_STRING;
