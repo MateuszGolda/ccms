@@ -1,7 +1,9 @@
 package com.codecool.ccms.dao;
 
 import com.codecool.ccms.models.SubmittedAssignment;
-
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SubmittedAssignmentDao extends RelationalDBDao<SubmittedAssignment> {
@@ -31,12 +33,37 @@ public class SubmittedAssignmentDao extends RelationalDBDao<SubmittedAssignment>
 
     @Override
     public List<SubmittedAssignment> findMatching(String query) {
-        return null;
+        List<SubmittedAssignment> assignments = new ArrayList<>();
+
+        try {
+            ResultSet results = statement.executeQuery(query);
+            while (results.next()) {
+                int id_user = results.getInt("id");
+                String name = results.getString("name");
+                String surname = results.getString("surname");
+                int id_assignments = results.getInt("id_assignment");
+                int grade = results.getInt("grade");
+
+                SubmittedAssignment submittedAssignment = new SubmittedAssignment(id_user, name, surname, id_assignments, grade);
+                assignments.add(submittedAssignment);
+            }
+            results.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return assignments;
     }
 
     @Override
     public List<SubmittedAssignment> find(String column, String value) {
-        return null;
+        String query = "SELECT * FROM assignments_users WHERE " + column + " = " + value + ";";
+        return findMatching(query);
+    }
+
+    public List<SubmittedAssignment> findGradedAssignments() {
+        String query = "SELECT id, name, surname, id_assignment, grade FROM assignments_users join users on id_user = id WHERE grade in (1,2,3,4,5)";
+        return findMatching(query);
     }
 
     @Override
