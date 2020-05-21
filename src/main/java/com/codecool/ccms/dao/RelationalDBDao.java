@@ -29,7 +29,7 @@ public abstract class RelationalDBDao<T> implements DAO<T> {
     }
 
     public ResultSet resultSetFromQuery(String table, String columns, String condition) {
-        String where = condition.isEmpty() ? "" : "WHERE" + condition;
+        String where = condition.isEmpty() ? "" : "WHERE " + condition;
         String query = String.format("SELECT %s FROM %s %s;", columns, table, where);
         return resultSetFromQuery(query);
     }

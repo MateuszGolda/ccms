@@ -1,6 +1,11 @@
 package com.codecool.ccms.controllers;
 
+import com.codecool.ccms.dao.UserDao;
+import com.codecool.ccms.models.Student;
+import com.codecool.ccms.models.User;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class EmployeeMenuController implements  MenuController {
@@ -32,6 +37,7 @@ public class EmployeeMenuController implements  MenuController {
     }
 
     private void displayStudentsList() {
+        UserDao.getInstance().print("id, name, surname, email","id_role = 1");
     }
 
     private void logout() {

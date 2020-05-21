@@ -3,7 +3,7 @@ package com.codecool.ccms.dao;
 import java.sql.ResultSet;
 import java.util.List;
 
-interface DAO<T> {
+public interface DAO<T> {
 
     List<T> findById(String id);
 
