@@ -1,5 +1,7 @@
 package com.codecool.ccms.controllers;
 
+import com.codecool.ccms.dao.UserDao;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +46,8 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void displayStudentsList() {
-        System.out.println("In displayStudentsList");
+        //ui.printTableFromDB(UserDao.getInstance().resultSetFromQuery("SELECT ")); //todo print table of students to se how they perform
+        UserDao.getInstance().print("id, name, surname, email","id_role = 1");
     }
 
     private void addAssignment() {
@@ -57,6 +60,9 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void addStudent() {
+
+//        String[] values = { name, surname, password, email, id_role };
+//        UserDao.getInstance().insert(values);
     }
 
     private void editStudent() {
