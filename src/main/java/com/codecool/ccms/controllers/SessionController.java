@@ -39,6 +39,10 @@ public class SessionController implements MenuController{
 
     private void login() {
         User user = logIn(new Login());
+        if (user == null) {
+            return;
+        }
+        ui.print("Logged in!");
         user.displayMenu();
     }
 
@@ -54,12 +58,10 @@ public class SessionController implements MenuController{
     private User logIn(Login login) {
         User loggedUser;
         String userEmail;
-        do {
+
             userEmail = ui.gatherInput("Email: ").toLowerCase();
             char[] userPassword = ui.gatherInput("Password: ").toCharArray();
             loggedUser = login.loginAttempt(userEmail, userPassword);
-        } while (loggedUser == null);
-        ui.print("Logged in");
         return loggedUser;
     }
 }
