@@ -2,6 +2,8 @@ package com.codecool.ccms.ui;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
+
 import com.jakewharton.fliptables.FlipTableConverters;
 
 public class UI {
@@ -17,13 +19,6 @@ public class UI {
             instance = new UI();
         }
         return instance;
-    }
-
-    public void displayLoginOrRegistrationMenu() {
-        print(new String[] {"Welcome to ccms",
-                             "(1) Login",
-                             "(2) Register",
-                             "(0) Exit"});
     }
 
     public <T> void printTable(Iterable<T> rows, Class<T> rowType) {
@@ -46,6 +41,10 @@ public class UI {
         for (String string : toPrint) {
             System.out.println(string);
         }
+    }
+
+    public void printMap(Map map){
+        map.forEach((k,v) -> System.out.println("("+k+") "+v));
     }
 
     public void gatherEmptyInput(String message) {
