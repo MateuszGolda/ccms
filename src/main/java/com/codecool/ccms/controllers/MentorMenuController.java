@@ -5,6 +5,7 @@ import com.codecool.ccms.dao.ClassesStudentsDao;
 import com.codecool.ccms.dao.SubmittedAssignmentDao;
 import com.codecool.ccms.dao.UserDao;
 import com.codecool.ccms.models.SubmittedAssignment;
+import com.jakewharton.fliptables.FlipTable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -71,9 +72,19 @@ public class MentorMenuController implements  MenuController{
                 studentsAverageGradesMap.put(student, ((float)sumOfGradesMap.get(student)/(float)numberOfGradesMap.get(student)));
             }
         }
-        ui.print("(Student) [Średnia Ocen]");
-        ui.printMap(studentsAverageGradesMap);
-        ui.print("\n");
+        String[] header = { "Student", "Grades average" };
+        String[][] data = mapToArray(studentsAverageGradesMap);
+        ui.print(FlipTable.of(header, data));
+    }
+
+    private static String[][] mapToArray (Map<String, Float> map) {
+        String[][] data = new String[map.size()][2];
+        int i = 0;
+        for (Map.Entry<String,Float> entry : map.entrySet()) {
+            data[i][0] = entry.getKey();
+            data[i++][1] = entry.getValue().toString();
+        }
+        return data;
     }
 
     private void addAssignment() {
