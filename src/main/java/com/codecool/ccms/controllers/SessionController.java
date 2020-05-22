@@ -60,7 +60,7 @@ public class SessionController implements MenuController{
         String userEmail;
 
             userEmail = ui.gatherInput("Email: ").toLowerCase();
-            char[] userPassword = ui.gatherInput("Password: ").toCharArray();
+            char[] userPassword = ui.readPassword("Password: ");
             loggedUser = login.loginAttempt(userEmail, userPassword);
         return loggedUser;
     }
