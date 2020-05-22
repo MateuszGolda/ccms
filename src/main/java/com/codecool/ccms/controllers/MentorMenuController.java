@@ -52,8 +52,13 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void displayStudentsList() {
-        //ui.printTableFromDB(UserDao.getInstance().resultSetFromQuery("SELECT ")); //todo print table of students to se how they perform
-        UserDao.getInstance().print("id, name, surname, email","id_role = 1");
+        //UserDao.getInstance().print("id, name, surname, email","id_role = 1"); // general list of students
+        displayStudentsWithClass();
+        displayStudentsWithoutClass();
+        displayStudentsGrades();
+    }
+
+    private void displayStudentsGrades() { //todo refactor this method
         List<SubmittedAssignment> submittedAssignmentList = SubmittedAssignmentDao.getInstance().findGradedAssignments();
         Map<String, Integer> numberOfGradesMap = new HashMap<>();
         Map<String, Integer> sumOfGradesMap = new HashMap<>();
@@ -74,8 +79,10 @@ public class MentorMenuController implements  MenuController{
         }
         String[] header = { "Student", "Grades average" };
         String[][] data = mapToArray(studentsAverageGradesMap);
+        ui.print("Students performance:\n");
         ui.print(FlipTable.of(header, data));
     }
+
 
     private static String[][] mapToArray (Map<String, Float> map) {
         String[][] data = new String[map.size()][2];
@@ -88,14 +95,15 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void addAssignment() {
+        displayAssignmentList();
         String[] data = gatherAssignmentData();
         AssignmentDao.getInstance().insert(data);
         ui.gatherEmptyInput("Assignment successfully added!\n");
     }
 
     private String[] gatherAssignmentData() {
-        String title = ui.gatherInput("Enter title for Assignment: ");
-        String description = ui.gatherInput("Enter assignment description: ");
+        String title = ui.gatherInput("Enter title for new Assignment: ");
+        String description = ui.gatherInput("Enter description for new Assignment: ");
         String isAvailable = "1"; //default set as available todo improve this magic number
         return new String[] { title, description, isAvailable };
     }
@@ -125,6 +133,7 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void displayAssignmentList() {
+        ui.print("Current Available Assignments for Students: ");
         AssignmentDao.getInstance().print("*","isAvailable = 1");
     }
 
@@ -133,7 +142,7 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void addStudent() {
-            displayStudentsList();
+            displayStudentsWithoutClass();
             String id = String.valueOf(ui.gatherIntInput("Enter id_user to add to a class: "));
             UserDao.getInstance().print("*","id = " + id);
             Map<Integer, String> classList = getClassList();
@@ -141,6 +150,13 @@ public class MentorMenuController implements  MenuController{
             int userChoice = ui.gatherIntInput("What class would you assign to that student?",1, classList.size());
             ClassesStudentsDao.getInstance().insert(new String[] {id, String.valueOf(userChoice)});
             ui.print("Student successfully added to class\n");
+    }
+
+    private void displayStudentsWithoutClass() {
+        ui.print("Students without assigned class :\n");
+        ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT id, name, surname, email FROM users\n" +
+                                                                            "left join classes_students on id=id_user\n" +
+                                                                            "where id_role = 1 and id_class is null"));
     }
 
     private Map<Integer, String> getClassList() {
@@ -153,9 +169,9 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void editStudent() {
-        displayStudentsList();
+        displayStudentsWithClass();
         String id = String.valueOf(ui.gatherIntInput("Enter id_user to edit student class: "));
-        UserDao.getInstance().print("*","id = " + id);
+        displayStudentByID(id);
         Map<Integer, String> classList = getClassList();
         ui.printMap(classList);
         int userChoice = ui.gatherIntInput("What class would you assign to that student?",1, classList.size());
@@ -163,11 +179,24 @@ public class MentorMenuController implements  MenuController{
         ui.print("Successfully updated student class\n");
     }
 
+    private void displayStudentByID(String id) {
+        ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT u.id, u.name, surname, email, c.name as \"class\" FROM users u\n" +
+                "join classes_students cs on u.id = cs.id_user\n" +
+                "join classes c on c.id = cs.id_class where u.id =" +id));
+    }
+
+    private void displayStudentsWithClass() {
+        ui.print("Students with assigned class :\n");
+        ui.printTableFromDB(AssignmentDao.getInstance().resultSetFromQuery("SELECT u.id, u.name, surname, email, c.name as \"class\" FROM users u\n" +
+                "join classes_students cs on u.id = cs.id_user\n" +
+                "join classes c on c.id = cs.id_class"));
+    }
+
     private void removeStudent() {
-        displayStudentsList();
+        displayStudentsWithClass();
         String id = String.valueOf(ui.gatherIntInput("Enter id_user to remove student from class: "));
         ClassesStudentsDao.getInstance().remove(id);
-        ui.print("Student successfully removed form class\n");
+        ui.print("Student successfully removed from class\n");
     }
 
     private void logout() {
