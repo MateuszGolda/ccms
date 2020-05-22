@@ -1,5 +1,8 @@
 package com.codecool.ccms.ui;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 
 public class IO {
@@ -74,5 +77,22 @@ public class IO {
         }
         System.out.println("Invalid input, please try again: ");
         return false;
+    }
+
+    public char[] readPassword(String format, Object... args)
+            throws IOException {
+        if (System.console() != null)
+            return System.console().readPassword(format, args);
+        return this.readLine(format, args).toCharArray();
+    }
+
+    private String readLine(String format, Object... args) throws IOException {
+        if (System.console() != null) {
+            return System.console().readLine(format, args);
+        }
+        System.out.print(String.format(format, args));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                System.in));
+        return reader.readLine();
     }
 }
