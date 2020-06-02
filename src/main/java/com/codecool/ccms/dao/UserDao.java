@@ -33,9 +33,10 @@ public class UserDao extends RelationalDBDao<User> {
                 String name = results.getString("name");
                 String surname = results.getString("surname");
                 String email = results.getString("email");
+                String password = results.getString("password");
 
                 Role role = Role.values()[results.getInt("id_role") - 1];
-                User user = UserFactory.getUser(role, id, name, surname, email);
+                User user = UserFactory.getUser(role, id, name, surname, email, password);
                 users.add(user);
             }
             results.close();

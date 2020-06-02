@@ -7,13 +7,15 @@ public abstract class User {
     private String name;
     private String surname;
     private String email;
+    private String password;
     private MenuController menuController;
 
-    User(int id, String name, String surname, String email) {
+    User(int id, String name, String surname, String email, String password) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
+        this.password = password;
         setController();
     }
 
@@ -43,5 +45,9 @@ public abstract class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

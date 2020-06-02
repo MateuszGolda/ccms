@@ -1,6 +1,5 @@
 package com.codecool.ccms.ui;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
@@ -68,12 +67,11 @@ public class UI {
         System.out.print("\033[H\033[2J");
     }
 
+    public String readAndHashPassword(String format, Object... args) {
+        return io.readAndHashPassword(format, args);
+    }
+
     public char[] readPassword(String format, Object... args) {
-        try {
-            return io.readPassword(format, args);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return io.readPassword(format, args);
     }
 }

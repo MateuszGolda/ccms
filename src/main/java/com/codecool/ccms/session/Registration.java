@@ -32,11 +32,11 @@ public class Registration {
     }
 
     private void register(String email) {
-        char[] password = ui.readPassword("Enter your password: ");
+        String password = ui.readAndHashPassword("Enter your password: ");
         String name = ui.gatherInput("Enter your name: ");
         String surname = ui.gatherInput("Enter your surname: ");
         String id_role = "1"; // by default new user role is student
-        String[] values = {name, surname, new String(password), email, id_role};
+        String[] values = {name, surname, password, email, id_role};
         UserDao.getInstance().insert(values);
         ui.gatherEmptyInput("Successfully registered!");
     }
