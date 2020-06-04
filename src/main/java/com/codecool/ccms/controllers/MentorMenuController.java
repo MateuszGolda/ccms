@@ -1,12 +1,13 @@
 package com.codecool.ccms.controllers;
 
-import com.codecool.ccms.dao.AssignmentDao;
-import com.codecool.ccms.dao.ClassesStudentsDao;
-import com.codecool.ccms.dao.SubmittedAssignmentDao;
-import com.codecool.ccms.dao.UserDao;
+import com.codecool.ccms.dao.*;
+import com.codecool.ccms.models.Presence;
 import com.codecool.ccms.models.SubmittedAssignment;
+import com.codecool.ccms.models.User;
 import com.jakewharton.fliptables.FlipTable;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +95,16 @@ public class MentorMenuController implements  MenuController{
         return data;
     }
 
+    private String[][] mapToArray2 (Map<String, String> map) {
+        String[][] data = new String[map.size()][2];
+        int i = 0;
+        for (Map.Entry<String,String> entry : map.entrySet()) {
+            data[i][0] = entry.getKey();
+            data[i++][1] = entry.getValue();
+        }
+        return data;
+    }
+
     private void addAssignment() {
         displayAssignmentList();
         String[] data = gatherAssignmentData();
@@ -138,7 +149,121 @@ public class MentorMenuController implements  MenuController{
     }
 
     private void checkAttendance() {
+        if (checkIfTodayAlreadyAttendanceChecked()){
+            ui.print("Today: "+ getTodayDate() +" presence has been already checked.");
+        } else {
+            ui.print("Presence not checked today\n");
+            AttendanceDayDAO.getInstance().insertDay(getTodayDate());
+            boolean isCheckingInProgress = true;
+            while(isCheckingInProgress){
+                displayStudentsWithClass();
+                String id = String.valueOf(ui.gatherIntInput("Enter id_user to set presence status:\nEnter '0' to end checking attendance."));
+                if (!id.trim().equals("0")) {
+                    if (!checkIfStudentPresenceStatusAlreadyAssigned(id)){
+                        insertStudentPresenceStatusToDB(id);
+                    } else {
+                        ui.print("You have already set Presence Status for that student\n");
+                        //todo Would you like to edit status for that student?
+                    }
+                } else {
+                    isCheckingInProgress = false;
+                }
+            }
+            ui.print("Checking presence ended\n");
+            displayPresencePercentageForStudents();
+        }
+    }
 
+    private void displayPresencePercentageForStudents() {
+        List<User> studentsList = getAllStudentsAssignedToClasses();
+        Map<String, String> studentsPresence = new HashMap<>();
+        int allDaysWhenPresenceWasChecked = getNumberOfDaysWhenPresenceWasChecked();
+        for (User student : studentsList) {
+            int noAbsentDays = countAllAbsentDays(student.getId());
+            double percentageOfPresence = ((allDaysWhenPresenceWasChecked - noAbsentDays)/(double) allDaysWhenPresenceWasChecked)*100;
+            String studentName = String.format("%s %s", student.getName(),student.getSurname());
+            studentsPresence.put(studentName,String.format("%.2f%%",percentageOfPresence));
+        }
+        String[] header = { "Student", "Presence" };
+        String[][] data = mapToArray2(studentsPresence);
+        ui.print("Students presence:\n");
+        ui.print(FlipTable.of(header, data));
+    }
+
+    private List<User> getAllStudentsAssignedToClasses() {
+        String query = "SELECT u.id, u.name, surname, email, password, id_role, c.name as class FROM users u\n"+
+                       "join classes_students cs on u.id = cs.id_user\n"+
+                       "join classes c on c.id = cs.id_class";
+        return UserDao.getInstance().findMatching(query);
+    }
+
+    private int getNumberOfDaysWhenPresenceWasChecked() {
+        String query = "SELECT * FROM attendance_days";
+        return AttendanceDayDAO.getInstance().getNumberOfRecords(query);
+    }
+
+    private int countAllAbsentDays(int userID) {
+        String query ="SELECT * FROM attendances a\n" +
+                "join presence_status ps on id_presence = ps.id\n"+
+                "where id_user = "+ userID +" and ps.name = 'ABSENT'";
+        return AttendanceDayDAO.getInstance().getNumberOfRecords(query);
+    }
+
+    private boolean checkIfStudentPresenceStatusAlreadyAssigned(String id) {
+        String query = String.format("SELECT * FROM attendances WHERE id_user = '%s' and id_attendance_day = '%s'", id, getDateIDByDate(getTodayDate()));
+        return !AttendanceDayDAO.getInstance().getDays(query,"id_attendance_day").isEmpty();
+    }
+
+    private void insertStudentPresenceStatusToDB(String id) {
+        displayStudentByID(id);
+        ui.print("What presence status assign to above student?");
+        ui.printMap(getPresenceStatuses());
+        int userInput = ui.gatherIntInput("Enter choice: ",1, getPresenceStatuses().size());
+        Presence presenceStatus = getPresenceStatuses().get(userInput);
+        delegateToAction(presenceStatus , id);
+    }
+
+    private void delegateToAction(Presence presenceStatus, String student_id) {
+        if(presenceStatus == Presence.PRESENT){
+            //todo
+            // check if for id_user, today date is any record in attendances table,
+            // if not do nothing, if is, remove that record
+        } else {
+            String presence = String.valueOf(presenceStatus.getValue());
+            String date = getDateIDByDate(getTodayDate());
+            AttendanceDayDAO.getInstance().insert(new String[] {student_id, date, presence});
+        }
+    }
+
+    private String getDateIDByDate(String todayDate) {
+        String query = String.format("SELECT * FROM attendance_days WHERE date = '%s'", todayDate);
+        String ID = AttendanceDayDAO.getInstance().getDayID(query);
+        return ID;
+    }
+
+    private Map<Integer, Presence> getPresenceStatuses() {
+        Map<Integer, Presence> classList = new HashMap<>();
+        classList.put(1, Presence.ABSENT);
+        classList.put(2, Presence.LATE);
+        classList.put(3, Presence.EXCUSED);
+        classList.put(4, Presence.PRESENT);
+        return classList;
+    }
+
+    private boolean checkIfTodayAlreadyAttendanceChecked() {
+        return checkIfTodayInDB(getTodayDate());
+    }
+
+    private String getTodayDate(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime now = LocalDateTime.now();
+        String date = now.format(formatter);
+        return date;
+    }
+
+    private boolean checkIfTodayInDB(String today) {
+        String query = String.format("SELECT * FROM attendance_days WHERE date = '%s'",today);
+        return !AttendanceDayDAO.getInstance().getDays(query, "date").isEmpty();
     }
 
     private void addStudent() {
