@@ -15,7 +15,7 @@ public class UserDao extends RelationalDBDao<User> {
         super();
     }
 
-    public static UserDao getInstance(){
+    public static UserDao getInstance() {
         if (instance == null) {
             instance = new UserDao();
         }
@@ -55,7 +55,7 @@ public class UserDao extends RelationalDBDao<User> {
 
     @Override
     public void insert(String[] values) {
-        String[] columns = { "name", "surname", "password", "email", "id_role" };
+        String[] columns = {"name", "surname", "password", "email", "id_role"};
         // add '' for text data
         for (int i = 0; i < 5; i++) {
             values[i] = String.format("'%s'", values[i]);

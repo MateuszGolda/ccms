@@ -11,6 +11,7 @@ public class Mentor extends User {
     protected void displayMainMenu() {
 
     }
+
     @Override
     public void setController() {
         setMenuController(new MentorMenuController());

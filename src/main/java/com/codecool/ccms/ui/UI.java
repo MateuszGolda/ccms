@@ -1,20 +1,20 @@
 package com.codecool.ccms.ui;
 
+import com.jakewharton.fliptables.FlipTableConverters;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import com.jakewharton.fliptables.FlipTableConverters;
-
 public class UI {
-    private final IO io;
     private static UI instance;
+    private final IO io;
 
     private UI() {
         io = new IO();
     }
 
-    public static UI getInstance(){
+    public static UI getInstance() {
         if (instance == null) {
             instance = new UI();
         }
@@ -43,8 +43,8 @@ public class UI {
         }
     }
 
-    public <K, V> void printMap(Map<K, V> map){
-        map.forEach((k,v) -> System.out.println("("+k+") "+v));
+    public <K, V> void printMap(Map<K, V> map) {
+        map.forEach((k, v) -> System.out.println("(" + k + ") " + v));
     }
 
     public void gatherEmptyInput(String message) {

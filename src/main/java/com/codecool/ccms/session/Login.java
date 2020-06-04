@@ -26,10 +26,10 @@ public class Login {
     private User userAssignedToClass(String userEmail) {
         List<User> users = UserDao.getInstance().findMatching(
                 "SELECT * " +
-                      "FROM users " +
-                      "JOIN classes_students " +
-                      "ON id_user = id " +
-                      "WHERE email = '" + userEmail + "' AND id_class IN (1,2,3,4);");
+                        "FROM users " +
+                        "JOIN classes_students " +
+                        "ON id_user = id " +
+                        "WHERE email = '" + userEmail + "' AND id_class IN (1,2,3,4);");
         if (users.isEmpty()) {
             UI.getInstance().print("You are not assigned to any class. Ask mentor to assign you to a class.\n");
             return null;

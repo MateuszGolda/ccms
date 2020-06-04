@@ -1,7 +1,7 @@
 package com.codecool.ccms.dao;
 
-import com.codecool.ccms.models.Presence;
 import com.codecool.ccms.models.AttendanceDay;
+import com.codecool.ccms.models.Presence;
 import com.codecool.ccms.models.User;
 
 import java.sql.PreparedStatement;
@@ -18,17 +18,17 @@ public class AttendanceDayDAO extends RelationalDBDao<AttendanceDay> {
     private static AttendanceDayDAO instance;
     private final String selectQuery =
             "SELECT id_user AS 'user id', date, name AS presence " +
-            "FROM attendance_days days " +
-            "JOIN attendances " +
-            "ON days.id = attendances.id_attendance_day " +
-            "JOIN presence_status presence " +
-            "ON id_presence = presence.id";
+                    "FROM attendance_days days " +
+                    "JOIN attendances " +
+                    "ON days.id = attendances.id_attendance_day " +
+                    "JOIN presence_status presence " +
+                    "ON id_presence = presence.id";
 
     private AttendanceDayDAO() {
         super();
     }
 
-    public static AttendanceDayDAO getInstance(){
+    public static AttendanceDayDAO getInstance() {
         if (instance == null) {
             instance = new AttendanceDayDAO();
         }
@@ -87,7 +87,7 @@ public class AttendanceDayDAO extends RelationalDBDao<AttendanceDay> {
         return attendanceDayIDs;
     }
 
-    public int getNumberOfRecords(String query){
+    public int getNumberOfRecords(String query) {
         int counter = 0;
         try {
             ResultSet results = statement.executeQuery(query);
@@ -172,10 +172,10 @@ public class AttendanceDayDAO extends RelationalDBDao<AttendanceDay> {
     public void print(String columns, String condition) {
         String table =
                 "attendance_days days " +
-                "JOIN attendances " +
-                "ON days.id = attendances.id_attendance_day " +
-                "JOIN presence_status presence " +
-                "ON id_presence = presence.id";
+                        "JOIN attendances " +
+                        "ON days.id = attendances.id_attendance_day " +
+                        "JOIN presence_status presence " +
+                        "ON id_presence = presence.id";
         ui.printTableFromDB(resultSetFromQuery(table, columns, condition));
     }
 

@@ -1,7 +1,7 @@
 package com.codecool.ccms;
 
-import com.codecool.ccms.dao.ConnectionToDB;
 import com.codecool.ccms.dao.ConnectionHandler;
+import com.codecool.ccms.dao.ConnectionToDB;
 import com.codecool.ccms.session.Session;
 
 import java.sql.SQLException;
@@ -11,8 +11,8 @@ import java.sql.SQLException;
  */
 public class Main {
     public static ConnectionHandler connectionHandler;
-    
-    public static void main( String[] args ) throws SQLException {
+
+    public static void main(String[] args) throws SQLException {
         try {
             connectionHandler = new ConnectionToDB("src/main/resources/ccmsDB");
             connectionHandler.connect();
