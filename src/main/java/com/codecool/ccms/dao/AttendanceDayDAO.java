@@ -4,6 +4,7 @@ import com.codecool.ccms.models.Presence;
 import com.codecool.ccms.models.AttendanceDay;
 import com.codecool.ccms.models.User;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -56,6 +57,50 @@ public class AttendanceDayDAO extends RelationalDBDao<AttendanceDay> {
         return attendanceDays;
     }
 
+    public List<String> getDays(String query, String column) {
+        List<String> attendanceDays = new ArrayList<>();
+
+        try {
+            ResultSet results = statement.executeQuery(query);
+            while (results.next()) {
+                String day = results.getString(column);
+                attendanceDays.add(day);
+            }
+            results.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return attendanceDays;
+    }
+
+    public String getDayID(String query) {
+        String attendanceDayIDs = "";
+        try {
+            ResultSet results = statement.executeQuery(query);
+            while (results.next()) {
+                attendanceDayIDs = results.getString("id");
+            }
+            results.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return attendanceDayIDs;
+    }
+
+    public int getNumberOfRecords(String query){
+        int counter = 0;
+        try {
+            ResultSet results = statement.executeQuery(query);
+            while (results.next()) {
+                counter++;
+            }
+            results.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return counter;
+    }
+
     private Map<User, Presence> fillStudentsPresenceMap() throws SQLException {
         List<User> students = UserDao.getInstance().find("id_role", "1");
         Map<User, Presence> studentsPresence = new HashMap<>();
@@ -79,13 +124,36 @@ public class AttendanceDayDAO extends RelationalDBDao<AttendanceDay> {
 
     @Override
     public void insert(String[] values) {
-        String[] columns = { "id_user", "id_attendance_day", "id_presence" };
-        insert("attendances", columns, values);
+        String insertDataString = "INSERT INTO attendances\n"
+                + "(id_user, id_attendance_day, id_presence)\n"
+                + "VALUES (?, ?, ?)";
+        PreparedStatement insertDate;
+        try {
+            insertDate = getInstance().connectionHandler.getConnection().prepareStatement(insertDataString);
+            insertDate.setString(1, values[0]);
+            insertDate.setString(2, values[1]);
+            insertDate.setString(3, values[2]);
+            insertDate.executeUpdate();
+            insertDate.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void insertDay(String[] day) {
-        String[] columns = { "day" };
-        insert("attendance_days", columns, day);
+    public void insertDay(String day) {
+        String insertDataString = "INSERT INTO attendance_days\n"
+                + "(date)\n"
+                + "VALUES (?)";
+        PreparedStatement insertDate;
+        try {
+            insertDate = getInstance().connectionHandler.getConnection().prepareStatement(insertDataString);
+            insertDate.setString(1, day);
+            insertDate.executeUpdate();
+            insertDate.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
