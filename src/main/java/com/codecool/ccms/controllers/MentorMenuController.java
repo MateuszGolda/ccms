@@ -170,8 +170,8 @@ public class MentorMenuController implements  MenuController{
                 }
             }
             ui.print("Checking presence ended\n");
-            displayPresencePercentageForStudents();
         }
+        displayPresencePercentageForStudents();
     }
 
     private void displayPresencePercentageForStudents() {
