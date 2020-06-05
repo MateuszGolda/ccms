@@ -129,7 +129,7 @@ public class AttendanceDayDAO extends RelationalDBDao<AttendanceDay> {
                 + "VALUES (?, ?, ?)";
         PreparedStatement insertDate;
         try {
-            insertDate = getInstance().connectionHandler.getConnection().prepareStatement(insertDataString);
+            insertDate = connectionHandler.getConnection().prepareStatement(insertDataString);
             insertDate.setString(1, values[0]);
             insertDate.setString(2, values[1]);
             insertDate.setString(3, values[2]);
@@ -146,7 +146,7 @@ public class AttendanceDayDAO extends RelationalDBDao<AttendanceDay> {
                 + "VALUES (?)";
         PreparedStatement insertDate;
         try {
-            insertDate = getInstance().connectionHandler.getConnection().prepareStatement(insertDataString);
+            insertDate = connectionHandler.getConnection().prepareStatement(insertDataString);
             insertDate.setString(1, day);
             insertDate.executeUpdate();
             insertDate.close();
